@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.mapper.UserInfoMapper">
+  <resultMap id="BaseResultMap" type="com.cinema.entity.UserInfo">
+    <id column="id" jdbcType="INTEGER" property="id"/>
+    <result column="nickname" jdbcType="VARCHAR" property="nickname"/>
+    <result column="username" jdbcType="VARCHAR" property="username"/>
+    <result column="password" jdbcType="VARCHAR" property="password"/>
+    <result column="phone" jdbcType="VARCHAR" property="phone"/>
+    <result column="email" jdbcType="VARCHAR" property="email"/>
+    <result column="status" jdbcType="CHAR" property="status"/>
+    <result column="role" jdbcType="CHAR" property="role"/>
+    <result column="member" jdbcType="CHAR" property="member"/>
+    <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+    <result column="member_time" jdbcType="VARCHAR" property="memberTime"/>
+
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, `nickname`, nickname, phone, email, username, `password`, `status`, `role`,member, create_time, member_time
+  </sql>
+  <select id="pageQuery" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from user_info
+    <where>
+      <if test="nickname != null and nickname != ''">
+        and name = #{nickname}
+      </if>
+      <if test="status != null and status != ''">
+        and status = #{status}
+      </if>
+      <if test="role != null and role != ''">
+        and role = #{role}
+      </if>
+      <if test="member != null and member != ''">
+        and member = #{member}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  <select id="getUserInfoByUsername" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from user_info where username = #{username}
+  </select>
+
+  <select id="getById" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from user_info where id = #{id}
+  </select>
+
+  <select id="getAll"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from user_info
+  </select>
+
+    <delete id="delete" parameterType="int">
+    delete from user_info
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cinema.entity.UserInfo"
+          useGeneratedKeys="true">
+    insert into user_info (`nickname`, phone, email,
+      username, `password`, `status`,
+      `role`,member,  create_time)
+    values (#{nickname,jdbcType=VARCHAR}, #{phone,jdbcType=CHAR}, #{email,jdbcType=INTEGER},
+      #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
+      #{role,jdbcType=CHAR},#{member,jdbcType=CHAR}, #{createTime,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.cinema.entity.UserInfo">
+    update user_info
+    <set>
+        <if test="nickname != null and nickname != ''">
+          `nickname` = #{nickname,jdbcType=VARCHAR},
+        </if>
+        <if test="phone != null and phone != ''">
+           phone = #{phone,jdbcType=CHAR},
+        </if>
+        <if test="email != null and email != ''">
+          email = #{email,jdbcType=INTEGER},
+        </if>
+        <if test="username != null and username != ''">
+          username = #{username,jdbcType=VARCHAR},
+        </if>
+        <if test="password != null and password != ''">
+          `password` = #{password,jdbcType=VARCHAR},
+        </if>
+        <if test="status != null and status != ''">
+          `status` = #{status,jdbcType=CHAR},
+        </if>
+        <if test="role != null and role != ''">
+          `role` = #{role,jdbcType=CHAR},
+        </if>
+      <if test="member != null and member != ''">
+        `member` = #{member,jdbcType=CHAR},
+      </if>
+        <if test="createTime != null and createTime != ''">
+          create_time = #{createTime,jdbcType=VARCHAR},
+        </if>
+      <if test="memberTime != null and memberTime != ''">
+        member_time = #{memberTime,jdbcType=VARCHAR},
+      </if>
+
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

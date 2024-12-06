@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.mapper.FavoriteInfoMapper">
+  <resultMap id="BaseResultMap" type="com.cinema.entity.FavoriteInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fid" jdbcType="VARCHAR" property="fid" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fid, uid, create_time
+  </sql>
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from favorite_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByUidAndFid">
+        delete
+      from favorite_info
+      where fid = #{fid} and uid = #{uid}
+    </delete>
+    <select id="getByUidAndFid" resultType="com.cinema.entity.FavoriteInfo">
+    select
+        <include refid="Base_Column_List"/>
+    from favorite_info
+        where fid = #{fid} and uid = #{uid}
+  </select>
+  <select id="getFIdListByUid" resultType="java.lang.Integer">
+    select
+    fid
+    from favorite_info
+    where uid = #{uid}
+    order by create_time
+  </select>
+  <select id="getFidList" resultType="java.lang.Integer">
+    select
+       fid
+     from favorite_info group by fid order by sum(1) desc limit 0, 5
+  </select>
+  <select id="getFavoriteInfoListByUid" resultType="com.cinema.entity.FavoriteInfo">
+    select
+      psi.*, fi.title AS title, fi.play_time AS playTime,
+      fi.definition AS definition,fi.score AS score, fi.image AS image, fi.release_time AS releaseTime
+    from favorite_info AS psi
+           left join film_info AS fi on psi.fid = fi.id
+    where psi.uid = #{uid} order by psi.create_time desc
+  </select>
+    <select id="getCIdListByUid" resultType="java.lang.Integer">
+      SELECT
+        fi1.id
+      FROM
+        film_info AS fi1,
+        (
+          SELECT
+            film_info.classification_id AS classification_id
+          FROM
+            favorite_info,
+            film_info
+          WHERE
+            favorite_info.uid = #{uid}
+            AND film_info.id = favorite_info.fid
+          GROUP BY
+            film_info.classification_id
+        ) AS fi2
+      WHERE
+        fi1.classification_id = fi2.classification_id and fi1.id not in (SELECT fid FROM favorite_info WHERE uid = #{uid})
+    </select>
+
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cinema.entity.FavoriteInfo" useGeneratedKeys="true">
+    insert into favorite_info (fid, uid, create_time
+      )
+    values (#{fid,jdbcType=VARCHAR}, #{uid,jdbcType=VARCHAR},  #{createTime,jdbcType=VARCHAR}
+      )
+  </insert>
+</mapper>

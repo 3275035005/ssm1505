@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.mapper.BannerInfoMapper">
+  <resultMap id="BaseResultMap" type="com.cinema.entity.BannerInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="status" jdbcType="CHAR" property="status" />
+    <result column="url" jdbcType="VARCHAR" property="url" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, image, url, status,sort, create_time
+  </sql>
+  <select id="pageQuery"  resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from banner_info
+    <where>
+      <if test="title != null and title != ''">
+        and title = #{title}
+      </if>
+      <if test="status != null and status != ''">
+        and status = #{status}
+      </if>
+    </where>
+    order by sort asc
+  </select>
+
+  <select id="getAll"  resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from banner_info
+    where status = '1'
+
+    order by sort asc
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from banner_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cinema.entity.BannerInfo" useGeneratedKeys="true">
+    insert into banner_info (title, image,status, sort, url,
+      create_time)
+    values (#{title,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR},
+       #{status,jdbcType=CHAR},
+      #{sort,jdbcType=INTEGER},
+      #{url,jdbcType=VARCHAR},
+      #{createTime,jdbcType=VARCHAR})
+  </insert>
+  <update id="update" parameterType="com.cinema.entity.BannerInfo">
+    update banner_info
+    set title = #{title,jdbcType=VARCHAR},
+      image = #{image,jdbcType=VARCHAR},
+      status = #{status,jdbcType=CHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      url = #{url,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.mapper.FilmInfoMapper">
+    <resultMap id="BaseResultMap" type="com.cinema.entity.FilmInfo">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="title" jdbcType="VARCHAR" property="title"/>
+        <result column="description" jdbcType="VARCHAR" property="description"/>
+        <result column="actor" jdbcType="VARCHAR" property="actor"/>
+        <result column="play_time" jdbcType="INTEGER" property="playTime"/>
+        <result column="release_time" jdbcType="VARCHAR" property="releaseTime"/>
+        <result column="definition" jdbcType="CHAR" property="definition"/>
+        <result column="image" jdbcType="VARCHAR" property="image"/>
+        <result column="score" jdbcType="VARCHAR" property="score"/>
+        <result column="film_url" jdbcType="VARCHAR" property="filmUrl"/>
+        <result column="classification_id" jdbcType="VARCHAR" property="classificationId"/>
+        <result column="classificationName" jdbcType="VARCHAR" property="classificationName"/>
+        <result column="recommend_status" jdbcType="CHAR" property="recommendStatus"/>
+        <result column="sort" jdbcType="INTEGER" property="sort"/>
+        <result column="member" jdbcType="CHAR" property="member"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, title, description, actor, play_time, release_time, `definition`, image, score,
+    film_url, classification_id, recommend_status, sort, member, create_time
+  </sql>
+    <select id="pageQuery" resultMap="BaseResultMap">
+        select
+        fi.*, fc.title AS classificationName
+        from film_info AS fi left join film_classification AS fc on fi.classification_id = fc.id
+        <where>
+            <if test="title != null and title != ''">
+                and fi.title = #{title}
+            </if>
+            <if test="recommendStatus != null and recommendStatus != ''">
+                and fi.recommend_status = #{recommendStatus}
+            </if>
+            <if test="classificationId != null and classificationId != ''">
+                and fi.classification_id = #{classificationId}
+            </if>
+            <if test="member != null and member != ''">
+                and fi.member = #{member}
+            </if>
+        </where>
+        order by fi.sort asc
+    </select>
+
+    <select id="getAll" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from film_info
+    </select>
+    <select id="getListByRecommendStatus" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from film_info where recommend_status = #{recommendStatus}
+    </select>
+
+  <select id="getById" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"/>
+    from film_info where id = #{id}
+  </select>
+    <select id="getListByClassificationIdIsNotFilmInfoId" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from film_info where classification_id = #{classificationId} and id != #{filmInfoId}
+    </select>
+
+    <select id="getListByClassificationIdAndTitle" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from film_info
+        <where>
+            <if test="id != null and id != ''">
+                and classification_id = #{id}
+            </if>
+            <if test="title != null and title != ''">
+                and title like "%"#{title}"%"
+            </if>
+        </where>
+    </select>
+    <select id="getFidList" resultType="java.lang.Integer">
+        select
+            id
+        from film_info order by sort asc
+
+    </select>
+    <select id="getFidListInfo" resultType="com.cinema.entity.FilmInfo">
+        select
+        *
+        from film_info
+        where id in
+        <foreach collection="fid" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+    <delete id="delete" parameterType="java.lang.Integer">
+    delete from film_info
+    where id = #{id,jdbcType=INTEGER}
+   </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cinema.entity.FilmInfo"
+            useGeneratedKeys="true">
+    insert into film_info (title, description, actor,
+      play_time, release_time, `definition`,
+      image, score, film_url,
+      classification_id, recommend_status, sort,member, create_time
+      )
+    values (#{title,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR}, #{actor,jdbcType=VARCHAR},
+      #{playTime,jdbcType=INTEGER}, #{releaseTime,jdbcType=VARCHAR}, #{definition,jdbcType=CHAR},
+      #{image,jdbcType=VARCHAR}, #{score,jdbcType=VARCHAR}, #{filmUrl,jdbcType=VARCHAR},
+      #{classificationId,jdbcType=VARCHAR},#{recommendStatus,jdbcType=CHAR}, #{sort,jdbcType=INTEGER}, #{member,jdbcType=CHAR}, #{createTime,jdbcType=VARCHAR}
+      )
+  </insert>
+    <update id="update" parameterType="com.cinema.entity.FilmInfo">
+    update film_info
+    set title = #{title,jdbcType=VARCHAR},
+      description = #{description,jdbcType=VARCHAR},
+      actor = #{actor,jdbcType=VARCHAR},
+      play_time = #{playTime,jdbcType=INTEGER},
+      release_time = #{releaseTime,jdbcType=VARCHAR},
+      `definition` = #{definition,jdbcType=CHAR},
+      image = #{image,jdbcType=VARCHAR},
+      score = #{score,jdbcType=VARCHAR},
+      film_url = #{filmUrl,jdbcType=VARCHAR},
+      classification_id = #{classificationId,jdbcType=VARCHAR},
+      `recommend_status` = #{recommendStatus,jdbcType=CHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      `member` = #{member,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

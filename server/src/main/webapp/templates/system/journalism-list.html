@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>电影新闻资讯</title>
+    <meta name="description" content="">
+    <meta name="referrer" content="no-referrer">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="stylesheet" th:href="@{/layuimini/lib/layui-v2.5.5/css/layui.css}" media="all">
+    <!-- CSS here -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/css/fontawesome-all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" th:href="@{/css/aos.css}">
+    <link rel="stylesheet" th:href="@{/css/slick.css}">
+    <link rel="stylesheet" th:href="@{/css/default.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <script th:src="@{/js/vendor/jquery-3.6.0.min.js}"></script>
+    <style type="text/css">
+        .v_list .item{    margin: 0 auto;
+            width: 50%; border-bottom: 1px solid #efefef; padding: 32px 0; display: flex; align-items: center;}
+        .v_list .item_pic{width: 160px; margin-right: 30px;}
+        .v_list .item_pic img{width: 100%; border-radius: 8px;}
+        .v_list .item_title{margin-bottom: 10px;}
+        .v_list .item_title a{color: #efefef; font-size: 18px; font-weight: bolder;}
+        .v_list .item_text{color: #999; margin-bottom: 10px;}
+        .v_list .item_info{display: flex; align-items: center; font-size: 14px; color: #999;}
+        .v_list .item_info p{margin-right: 20px;}
+    </style>
+</head>
+<body>
+
+<div th:replace="system/common/commons.html::topBar"></div>
+
+
+<!-- main-area -->
+<main>
+
+    <!-- breadcrumb-area -->
+    <section class="breadcrumb-area breadcrumb-bg" data-background="img/bg/breadcrumb_bg.jpg">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="breadcrumb-content">
+                        <h2 class="title">电影 <span>新闻资讯</span></h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- breadcrumb-area-end -->
+
+    <!-- movie-area -->
+    <section class="movie-area movie-bg" data-background="img/bg/movie_bg.jpg" style="height: 100%">
+        <div class="v_list">
+            <!-- item -->
+            <div class="item" th:each="item : ${list}">
+                <div class="item_pic">
+                    <img th:src="${item.getImage()}" />
+                </div>
+                <div class="item_box">
+                    <div class="item_title">
+                        <a th:href="@{/toJournalismDetail(id=${item.getId()})}">[[${item.getTitle()}]]</a>
+                    </div>
+                    <div class="item_text">
+                        [[${item.getContent()}]]
+                    </div>
+                    <div class="item_info">
+                        <p>[[${item.getCreateTime()}]]</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </section>
+    <!-- movie-area-end -->
+
+    <!-- newsletter-area -->
+    <section class="newsletter-area newsletter-bg" data-background="img/bg/newsletter_bg.jpg">
+        <div class="container">
+            <div class="newsletter-inner-wrap">
+                <div class="row align-items-center">
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- newsletter-area-end -->
+
+</main>
+<!-- main-area-end -->
+<script th:src="@{/layuimini/lib/layui-v2.5.5/layui.js}" charset="utf-8"></script>
+
+<script type="text/javascript">
+    $(function () {
+        $("li").hover(function () {
+            // 监听li的移入事件
+            $(this).addClass("current")
+        }, function () {
+            // 监听li的移出事件
+            $(this).removeClass("current")
+        })
+    })
+
+
+</script>
+
+<div th:replace="system/common/commons.html::bottomBar"></div>
+
+
+</body>
+</html>

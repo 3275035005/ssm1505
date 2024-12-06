@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.mapper.PlayScheduleInfoMapper">
+  <resultMap id="BaseResultMap" type="com.cinema.entity.PlayScheduleInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="fid" jdbcType="VARCHAR" property="fid" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="schedule" jdbcType="INTEGER" property="schedule" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="play_time" jdbcType="INTEGER" property="playTime" />
+    <result column="definition" jdbcType="VARCHAR" property="definition" />
+    <result column="score" jdbcType="VARCHAR" property="score" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="release_time" jdbcType="VARCHAR" property="releaseTime" />
+
+
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, fid, uid, schedule, create_time
+  </sql>
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from play_schedule_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByUidAndFid">
+        delete
+      from play_schedule_info
+      where fid = #{fid} and uid = #{uid}
+    </delete>
+    <select id="getByUidAndFid" resultType="com.cinema.entity.PlayScheduleInfo">
+    select
+        <include refid="Base_Column_List"/>
+    from play_schedule_info
+        where fid = #{fid} and uid = #{uid}
+  </select>
+  <select id="getPlayScheduleByUidAndFId" resultType="com.cinema.entity.PlayScheduleInfo">
+    select
+    <include refid="Base_Column_List"/>
+    from play_schedule_info
+    where fid = #{fid} and uid = #{uid}
+  </select>
+  <select id="getPlayScheduleListByUid" resultType="com.cinema.entity.PlayScheduleInfo">
+    select
+    psi.*, fi.title AS title, fi.play_time AS playTime,
+    fi.definition AS definition,fi.score AS score, fi.image AS image, fi.release_time AS releaseTime
+    from play_schedule_info AS psi
+    left join film_info AS fi on psi.fid = fi.id
+    where psi.uid = #{uid} order by psi.create_time desc
+  </select>
+
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cinema.entity.PlayScheduleInfo" useGeneratedKeys="true">
+    insert into play_schedule_info (fid, uid, schedule, create_time
+      )
+    values (#{fid,jdbcType=VARCHAR}, #{uid,jdbcType=VARCHAR}, #{schedule,jdbcType=INTEGER},   #{createTime,jdbcType=VARCHAR}
+      )
+  </insert>
+
+  <update id="update" parameterType="com.cinema.entity.UserInfo">
+    update play_schedule_info
+    <set>
+      <if test="fid != null and fid != ''">
+        `fid` = #{fid,jdbcType=INTEGER},
+      </if>
+      <if test="uid != null and uid != ''">
+        uid = #{uid,jdbcType=INTEGER},
+      </if>
+      <if test="schedule != null and schedule != ''">
+        schedule = #{schedule,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

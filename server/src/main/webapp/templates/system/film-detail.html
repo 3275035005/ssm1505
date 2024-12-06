@@ -1,0 +1,297 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<base th:href="@{/}">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>电影详情</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- CSS here -->
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <link rel="stylesheet" th:href="@{/css/animate.min.css}">
+    <link rel="stylesheet" th:href="@{/css/magnific-popup.css}">
+    <link rel="stylesheet" th:href="@{/css/fontawesome-all.min.css}">
+    <link rel="stylesheet" th:href="@{/css/owl.carousel.min.css}">
+    <link rel="stylesheet" th:href="@{/css/flaticon.css}">
+    <link rel="stylesheet" th:href="@{/css/odometer.css}">
+    <link rel="stylesheet" th:href="@{/css/aos.css}">
+    <link rel="stylesheet" th:href="@{/css/slick.css}">
+    <link rel="stylesheet" th:href="@{/css/default.css}">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/layuimini/lib/layui-v2.5.5/css/layui.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuimini/css/public.css}" media="all">
+    <link rel="stylesheet" th:href="@{/layuimini/js/lay-module/dtree/dtree.css}">
+    <link rel="stylesheet" th:href="@{/layuimini/js/lay-module/dtree/font/dtreefont.css}">
+</head>
+<body>
+
+<div th:replace="system/common/commons.html::topBar"></div>
+
+
+<!-- main-area -->
+<main>
+
+    <!-- movie-details-area -->
+    <section class="movie-details-area" data-background="img/bg/movie_details_bg.jpg">
+        <div class="container">
+            <div class="row align-items-center position-relative">
+                <div class="col-xl-3 col-lg-4">
+                    <div class="movie-details-img">
+                        <img style="height: 400px;width: 300px;" th:src="${filmInfo.getImage()}">
+                    </div>
+                </div>
+                <div class="col-xl-6 col-lg-8">
+                    <div class="movie-details-content">
+                        <h2>[[${filmInfo.getTitle()}]]</h2>
+                        <div class="banner-meta">
+                            <ul>
+                                <li class="quality">
+                                    <span>4K</span>
+                                    <span>HD</span>
+                                </li>
+                                <li class="category">
+                                    <a href="#">[[${filmInfo.getActor()}]]</a>
+                                </li>
+                                <li class="release-time">
+                                    <span><i class="far fa-calendar-alt"></i> [[${filmInfo.getReleaseTime()}]]</span>
+
+                                </li>
+                            </ul>
+                        </div>
+                        <p>[[${filmInfo.getDescription()}]]</p>
+                        <div class="movie-details-prime">
+                            <ul>
+                                <li class="share"><span><i class="far fa-clock"></i> [[${filmInfo.getPlayTime()}]] 分钟</span></li>
+                                <li class="watch">
+                                    <button th:if="${favorite == true}" class="btn" th:onclick="|favoriteOnclick('1', ${filmInfo.getId()} )|"><i class="fas fa-star"></i>已收藏</button>
+                                    <button th:if="${favorite == false}" class="btn" th:onclick="|favoriteOnclick('2', ${filmInfo.getId()} )|"><i class="fas fa-star"></i>未收藏</button>
+                                </li>
+                                <li class="watch">
+<!--                                    <a th:href="@{/toFilmPlay(id=${filmInfo.getId()})}" style="color: #e3dfdf">-->
+                                    <button id="addAppointmentWindow" class="btn" type="button" th:onclick="|doWatch(${filmInfo.getId()})|"><i class="fas fa-play"></i>
+                                       观看</button></a>
+                                </li>
+                                <li class="watch">
+                                    <button class="btn" type="button"  th:onclick="|doSaveEntity(${filmInfo.getId()})|"><i class="fas fa-share-alt"></i>
+                                        分享</button></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div style="padding: 180px 70px;">
+                    <h2 style="margin-top: -155px;"><i class="fas fa-thumbs-up"></i> 评分 <span style="color: #8FD19E;">[[${filmInfo.getScore()}]]</span></h2>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- movie-details-area-end -->
+
+
+
+    <!-- tv-series-area -->
+    <section class="tv-series-area tv-series-bg" data-background="img/bg/tv_series_bg02.jpg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="section-title text-center mb-50">
+                        <h2 class="title">类似 <span style="color: yellowgreen;">|</span> 影片</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center" >
+                <div class="col-xl-3 col-lg-4 col-sm-6" th:each="filmInfo : ${similarList}">
+                    <div class="movie-item mb-50" >
+                        <div class="movie-poster">
+                            <a th:href="@{/toFilmDetail(id=${filmInfo.getId()})}"><img th:src="${filmInfo.getImage()}" alt=""></a>
+                        </div>
+                        <div class="movie-content">
+                            <div class="top">
+                                <h5 class="title">[[${filmInfo.getTitle()}]]</h5>
+                                <span class="date">[[${filmInfo.getReleaseTime()}]]</span>
+                            </div>
+                            <div class="bottom">
+                                <ul>
+                                    <li>
+                                        <span class="quality" th:if="${filmInfo.getDefinition() == '1'}">480P</span>
+                                        <span class="quality" th:if="${filmInfo.getDefinition() == '2'}">720P</span>
+                                        <span class="quality" th:if="${filmInfo.getDefinition() == '3'}">1080P</span>
+                                        <span class="quality" th:if="${filmInfo.getDefinition() == '4'}">4K</span>
+                                    </li>
+                                    <li>
+                                        <span class="duration"><i class="far fa-clock"></i> [[${filmInfo.getPlayTime()}]] 分钟</span>
+                                        <span class="rating"><i class="fas fa-thumbs-up"></i> [[${filmInfo.getScore()}]]</span>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- tv-series-area-end -->
+
+    <!-- tv-series-area -->
+    <section class="tv-series-area tv-series-bg" data-background="img/bg/tv_series_bg02.jpg">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="section-title text-center mb-50">
+                        <h2 class="title">发布 <span style="color: yellowgreen;">|</span> 评论</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center" >
+                <div class="col-lg-5">
+                    <div class="contact-form-wrap">
+                        <div class="contact-form">
+                            <form class="layui-form layuimini-form" id="dataForm" lay-filter="dataFormFilter">
+                                <input class="layui-input" lay-verify="required" type="text" name="content" placeholder="请输入评论内容">
+                                <button type="submit" lay-submit lay-filter="dataFormSubmit" class="btn">发布评论</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-8">
+                    <div class="contact-form" th:each="commentInfo : ${commentList}">
+                        <!--代码部分-->
+                        <div class="media">
+                            <div class="media-body">
+                                <h4 class="media-heading">[[${commentInfo.getNickname()}]]（[[${commentInfo.getCreateTime()}]]）</h4>
+                                <p>[[${commentInfo.getContent()}]]</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        </div>
+            </div>
+        </div>
+    </section>
+    <!-- tv-series-area-end -->
+
+    <!-- newsletter-area -->
+    <section class="newsletter-area newsletter-bg" data-background="img/bg/newsletter_bg.jpg">
+        <div class="container">
+            <div class="newsletter-inner-wrap">
+            </div>
+        </div>
+    </section>
+    <!-- newsletter-area-end -->
+</main>
+
+
+<div th:replace="system/common/commons.html::bottomBar"></div>
+<script th:src="@{/layuimini/js/lay-module/xm-select/xm-select.js}"></script>
+<script th:src="@{/layuimini/lib/layui-v2.5.5/layui.js}" charset="utf-8"></script>
+<script th:src="@{/layuimini/js/lay-config.js?v=2.0.0}" charset="utf-8"></script>
+</body>
+
+
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form
+
+
+        form.on('submit(dataFormSubmit)', function (data) {
+            $.ajax({
+                type: 'post',
+                url: 'userWeb/sendComment',
+                data: JSON.stringify({
+                    fid: [[${filmInfo.getId()}]],
+                    content: data.field.content
+                }),
+                dataType: 'json',
+                contentType: 'application/json',
+                success: function (res) {
+                    if(res.code === 200){
+                        layer.msg(res.message, {time: 1000, icon: 1}, function () {
+                            window.location.reload();
+                        });
+                    }else{
+                        layer.msg(res.message, {time: 1000, icon: 2});
+                    }
+                },
+                error: function (res){
+                    layer.msg('请求失败',{time: 1000, icon: 2});
+                }
+            });
+            return false;
+        });
+
+    });
+    function favoriteOnclick(type, fid) {
+        $.ajax({
+            type: 'post',
+            url: 'userWeb/favorite',
+            data: JSON.stringify({
+                fid: fid,
+                type: type
+            }),
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (res) {
+                if(res.code === 200){
+                    console.log(res)
+                    window.location.reload();
+                }
+            },
+            error: function (res){
+
+            }
+        });
+
+    };
+    function doSaveEntity(id){
+        layer.confirm(
+            "http://localhost:8081/toFilmDetail?id="+id, {title:"分享", btn: ["复制链接", "取消"]},
+            function () {
+                copyTextToClipboard("http://localhost:8081/toFilmDetail?id="+id);
+                layer.msg("复制成功");
+            },
+            function () {
+                layer.close();
+            })
+    };
+    function doWatch(id){
+        $.ajax({
+            type: 'post',
+            url: '/userWeb/getFilmInfoByMember/'+id,
+            dataType: 'json',
+            contentType: 'application/json',
+            success: function (res){
+                if(res.code === 200){
+                    window.location.href = "/toFilmPlay?id="+id;
+                }else{
+                    layer.msg("您不是会员无法观看",{time: 500,icon: 2});
+                }
+            },
+            error: function (res){
+                layer.msg('请求失败',{time: 500,icon: 2});
+            }
+        });
+    }
+
+
+
+
+    function copyTextToClipboard(text) {
+        var textArea = document.createElement("textarea");
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+    }
+</script>
+</html>

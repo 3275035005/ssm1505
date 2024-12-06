@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>[[${filmInfo.getTitle()}]]</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            background-color: #000;
+        }
+
+        #video-player {
+            max-width: 800px;
+            width: 100%;
+            height: 500px;
+            background-color: #000;
+            position: relative;
+        }
+
+        #video-player video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        #screenshot-button {
+            position: absolute;
+            bottom: 250px;
+            right: 1px;
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 6px 10px;
+            border-radius: 19px;
+            cursor: pointer;
+            visibility: hidden;
+        }
+
+        #video-player:hover #screenshot-button{
+            visibility: visible;
+        }
+
+        #canvas {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<div id="video-player">
+    <video id="video" controls autoplay  th:poster="${filmInfo.getImage()}">
+        <source th:src="${filmInfo.getFilmUrl()}" type="video/mp4">
+    </video>
+</div>
+<script th:src="@{/js/axios.js}" charset="utf-8"></script>
+<script>
+    var video = document.getElementById('video');
+    var canvas = document.getElementById('canvas');
+    var downloadLink = document.createElement('a');
+    var screenshotButton = document.getElementById('screenshot-button');
+    var progressBar = document.getElementById("progressBar");
+
+    video.addEventListener('ended', function() {
+
+        video.play();
+    });
+    video.currentTime = [[${filmInfo.getPlayScheduleInfo().getSchedule()}]];
+    video.loop = true;
+    video.addEventListener("timeupdate",function(){
+        //用秒数来显示当前播放进度
+        let timeDisplay = Math.floor(video.currentTime);
+        axios.post("userWeb/updatePlay", {
+            id: [[${filmInfo.getPlayScheduleInfo().getId()}]],
+            schedule: timeDisplay
+        }).then(res => {
+            console.log(res)
+        }).catch(err => {
+            layer.msg('请求失败',{time: 1000, icon: 2});
+        })
+    },false);
+
+
+    screenshotButton.addEventListener('click', function() {
+        console.log("click");
+        var canvasContext = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(function(blob) {
+            var fileName = 'screenshot-' + Date.now() + '.png';
+            downloadLink.href = URL.createObjectURL(blob);
+            downloadLink.download = fileName;
+            downloadLink.click();
+        }, 'image/png');
+    });
+
+
+</script>
+</body>
+</html>

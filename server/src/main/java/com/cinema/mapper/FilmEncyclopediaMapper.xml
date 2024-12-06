@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.mapper.FilmEncyclopediaMapper">
+  <resultMap id="BaseResultMap" type="com.cinema.entity.FilmEncyclopedia">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="image" jdbcType="VARCHAR" property="image" />
+    <result column="content" jdbcType="VARCHAR" property="content" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.cinema.entity.FilmEncyclopedia">
+    <result column="introduce" jdbcType="LONGVARCHAR" property="introduce" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title,image, content, create_time
+  </sql>
+  <sql id="Blob_Column_List">
+    introduce
+  </sql>
+  <select id="pageQuery" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from film_encyclopedia
+    <where>
+      <if test="title != null and title != ''">
+        and title = #{title}
+      </if>
+    </where>
+    order by create_time desc
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from film_encyclopedia
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cinema.entity.FilmEncyclopedia" useGeneratedKeys="true">
+    insert into film_encyclopedia (title,image, content, create_time,
+      introduce)
+    values (#{title,jdbcType=VARCHAR}, #{image,jdbcType=VARCHAR}, #{content,jdbcType=VARCHAR}, #{createTime,jdbcType=VARCHAR},
+      #{introduce,jdbcType=LONGVARCHAR})
+  </insert>
+  <update id="update" parameterType="com.cinema.entity.FilmEncyclopedia">
+    update film_encyclopedia
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=VARCHAR},
+      </if>
+      <if test="image != null">
+        image = #{image,jdbcType=VARCHAR},
+      </if>
+      <if test="content != null">
+        content = #{content,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=VARCHAR},
+      </if>
+      <if test="introduce != null">
+        introduce = #{introduce,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <select id="getAll" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from film_encyclopedia
+    order by create_time desc
+  </select>
+
+  <select id="getById" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from film_encyclopedia
+    where id = #{id}
+  </select>
+</mapper>

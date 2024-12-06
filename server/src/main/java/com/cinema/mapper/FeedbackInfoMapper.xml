@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.mapper.FeedbackInfoMapper">
+  <resultMap id="BaseResultMap" type="com.cinema.entity.FeedbackInfo">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="detail" jdbcType="VARCHAR" property="detail" />
+    <result column="uid" jdbcType="INTEGER" property="uid" />
+    <result column="nickname" jdbcType="INTEGER" property="nickname" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, title, detail, uid, create_time
+  </sql>
+  <select id="pageQuery" resultMap="BaseResultMap">
+    select
+    fi.*,  ui.nickname
+    from feedback_info AS fi left join user_info AS ui on fi.uid = ui.id
+    <where>
+      <if test="title != null and title != ''">
+        and fi.title = #{title}
+      </if>
+      <if test="uid != null and uid != ''">
+        and fi.uid = #{uid}
+      </if>
+    </where>
+    order by fi.create_time desc
+  </select>
+  <delete id="delete" parameterType="java.lang.Integer">
+    delete from feedback_info
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cinema.entity.FeedbackInfo" useGeneratedKeys="true">
+    insert into feedback_info (title, detail, uid, create_time
+      )
+    values (#{title,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR},#{uid,jdbcType=INTEGER},  #{createTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="update" parameterType="com.cinema.entity.FeedbackInfo">
+    update feedback_info
+    set title = #{title,jdbcType=VARCHAR},
+      detail = #{detail,jdbcType=VARCHAR},
+        uid = #{uid,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

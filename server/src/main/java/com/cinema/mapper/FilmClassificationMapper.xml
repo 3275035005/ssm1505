@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cinema.mapper.FilmClassificationMapper">
+  <resultMap id="BaseResultMap" type="com.cinema.entity.FilmClassification">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="title" jdbcType="VARCHAR" property="title" />
+    <result column="sort" jdbcType="INTEGER" property="sort" />
+    <result column="create_time" jdbcType="VARCHAR" property="createTime" />
+  </resultMap>
+  <resultMap id="RStationList" type="com.cinema.entity.FilmClassification">
+    <result property="title" column="title"/>
+    <collection  property="filmInfoList"  ofType="com.cinema.entity.FilmInfo" >
+      <result column="tid" property="id" />
+      <result column="filmInfoTitle" property="title" />
+      <result column="image" property="image" />
+    </collection >
+  </resultMap>
+
+  <sql id="Base_Column_List">
+    id, title, sort, create_time
+  </sql>
+  <select id="pageQuery" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from film_classification
+    <where>
+      <if test="title != null and title != ''">
+        and title = #{title}
+      </if>
+    </where>
+    order by sort asc
+  </select>
+
+  <select id="getAll" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from film_classification
+    order by sort desc
+  </select>
+    <select id="getHabitList" resultMap="RStationList">
+     SELECT
+	fc.title AS  title,fi.id AS tid, fi.title AS filmInfoTitle, fi.image AS image
+FROM
+	(
+	SELECT
+		fi.classification_id,
+		fc.title
+	FROM
+		(
+		SELECT
+			sum( fi2.count ) AS count,
+			fi1.classification_id
+		FROM
+			( SELECT sum( 1 ) AS count, fid FROM play_schedule_info GROUP BY fid ) AS fi2
+			LEFT JOIN film_info AS fi1 ON fi1.id = fi2.fid
+		GROUP BY
+			fi1.classification_id
+		) AS fi
+		LEFT JOIN film_classification AS fc ON fi.classification_id = fc.id
+	ORDER BY
+	fi.count DESC
+	) AS fc LEFT JOIN film_info AS fi ON fi.classification_id = fc.classification_id
+    </select>
+    <delete id="delete" parameterType="java.lang.Integer">
+    delete from film_classification
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.cinema.entity.FilmClassification" useGeneratedKeys="true">
+    insert into film_classification (title, sort, create_time
+      )
+    values (#{title,jdbcType=VARCHAR}, #{sort,jdbcType=INTEGER}, #{createTime,jdbcType=VARCHAR}
+      )
+  </insert>
+  <update id="update" parameterType="com.cinema.entity.FilmClassification">
+    update film_classification
+    set title = #{title,jdbcType=VARCHAR},
+      sort = #{sort,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      background-color: #000;
+    }
+
+    #video-player {
+      max-width: 800px;
+      width: 100%;
+      height: 500px;
+      background-color: #000;
+      position: relative;
+    }
+
+    #video-player video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    #screenshot-button {
+      position: absolute;
+      bottom: 250px;
+      right: 1px;
+      background-color: #4CAF50;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 19px;
+      cursor: pointer;
+      visibility: hidden;
+    }
+
+    #video-player:hover #screenshot-button{
+      visibility: visible;
+    }
+
+    #canvas {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+<div id="video-player">
+  <video id="video" controls autoplay  poster="">
+    <source src="http://localhost:8081/files/download?fileName=file16928636283949f9ea7a-17b9535e253.mp4" type="video/mp4">
+  </video>
+</div>
+
+<script>
+  var video = document.getElementById('video');
+  var canvas = document.getElementById('canvas');
+  var downloadLink = document.createElement('a');
+  var screenshotButton = document.getElementById('screenshot-button');
+
+  video.addEventListener('ended', function() {
+    video.currentTime = 0;
+    video.play();
+  });
+
+  video.loop = true;
+
+  screenshotButton.addEventListener('click', function() {
+    var canvasContext = canvas.getContext('2d');
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    canvasContext.drawImage(video, 0, 0, canvas.width, canvas.height);
+    canvas.toBlob(function(blob) {
+      var fileName = 'screenshot-' + Date.now() + '.png';
+      downloadLink.href = URL.createObjectURL(blob);
+      downloadLink.download = fileName;
+      downloadLink.click();
+    }, 'image/png');
+  });
+</script>
+</body>
+</html>
